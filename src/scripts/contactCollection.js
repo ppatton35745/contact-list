@@ -1,16 +1,31 @@
-if (localStorage.getItem("contacts")) {
-    const contacts = localStorage.getItem("contacts");
-    console.log(contacts);
-    contacts.sort(function (a, b) {
-        return a.id - b.id;
-    });
-    const maxId = contacts[contacts.length - 1].id;
-} else {
-    const contacts = []
+const checkStorage = () => {
+
+    const contacts = {};
+    const storedData = localStorage.getItem("contacts");
+
+    if (storedData) {
+        const storedContacts = JSON.parse(storedData);
+        storedContacts.sort(function (a, b) {
+            return a.id - b.id;
+        });
+        contacts.array = storedContacts;
+        contacts.maxId = parseInt(storedContacts[storedContacts.length - 1].id);
+    } else{
+        contacts.array = [];
+        contacts.maxId = 1;
+    }
+
+    return contacts;
 }
 
+const initialContacts = checkStorage();
+
+const maxId = initialContacts.maxId;
+let contacts = initialContacts.array;
+
+
 const idGenerator = function* (startFrom = 0) {
-    let newId = (maxId ? maxId + 1 : 1)
+    let newId = maxId;
 
     while (true) {
         yield startFrom + newId
@@ -20,17 +35,17 @@ const idGenerator = function* (startFrom = 0) {
 
 const uuidMaker = idGenerator()
 
-const contactFactory = (lastName, firstName, address, phoneNumber) => {
+const makeContact = (lastName, firstName, address, phoneNumber) => {
     const newContact = Object.create(null, {
         "id": {
             value: uuidMaker.next().value
         },
         "lastName": {
-            value: name,
+            value: lastName,
             enumerable: true
         },
         "firstName": {
-            value: name,
+            value: firstName,
             enumerable: true
         },
         "address": {
@@ -48,18 +63,17 @@ const contactFactory = (lastName, firstName, address, phoneNumber) => {
 
 const contactCollection = {
     addContact: function (lastName, firstName, address, phoneNumber) {
-        newContact = newContact(lastName, firstName, address, phoneNumber);
+        const newContact = makeContact(lastName, firstName, address, phoneNumber);
         contacts.push(newContact);
-        localStorage.setItem("contacts", contacts);
+        localStorage.setItem("contacts", JSON.stringify(contacts));
     },
     removeContact: function (id) {
-        contacts.forEach((element, index, array) => {
-            if (element.id === id) {
-                array.pop(element);
-                localStorage.setItem("contacts", contacts);
-            }
-        });
+        //const result = words.filter(word => word.length > 6);
+        const newContactsArray = contacts.filter(element => element.id !== id);
+        contacts = newContactsArray;
+        localStorage.setItem("contacts", JSON.stringify(contacts));
     },
+    // filter
     getContactById: function (id) {
         contacts.forEach((element, index, array) => {
             if (element.id === id) {
