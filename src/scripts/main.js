@@ -1,42 +1,14 @@
-const DomBuilder = require("./DomBuilder")
+const contacts = require("./contactCollection")
 
-const output = document.querySelector(".output")
+console.log(contacts.getContacts);
 
-const fragment = document.createDocumentFragment()
+contacts.addContact("Sawyer", "Tom", "Maple Street", "5345938495");
+contacts.addContact("Thompson", "Sue", "Birch Street", "3069582759");
+contacts.addContact("Hardy", "Greg", "Fir Street", "3759206395");
 
-const inputFieldFactory = (classList, defaultPlaceholderText,type) => {
-  const inputField = document.createElement("input")
-  inputField.setAttribute("type", type)
-  inputField.classList = classList
-  inputField.placeholder = defaultPlaceholderText
-  return inputField
-}
+console.log(contacts.getContacts);
 
-const buttonFactory = (classList, textContent) => {
-  const theButton = document.createElement("button")
-  theButton.classList = classList
-  theButton.textContent = textContent
-  return theButton
-}
+contacts.removeContact(1);
+contacts.removeContact(2);
 
-const sectionFactory = (classList, textContent) => {
-  const theButton = document.createElement("section")
-  theButton.classList = classList
-  theButton.textContent = textContent
-  return theButton
-}
-
-const cardTextInputField = inputFieldFactory("input--text", "Enter card text here", "text")
-const createCardButton = buttonFactory("button--submit", "Create Card")
-createCardButton.addEventListener("click", () => {
-  const cardText = cardTextInputField.value
-  output.appendChild(sectionFactory("card", cardText))
-  cardTextInputField.value = ""
-})
-
-
-fragment.appendChild(cardTextInputField)
-fragment.appendChild(createCardButton)
-
-// output.appendChild(fragment)
-DomBuilder(fragment, ".output")
+console.log(contacts.getContacts);
